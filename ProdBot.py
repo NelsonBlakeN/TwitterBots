@@ -54,7 +54,7 @@ else:
     t_api.update_status(status="No gif today folks, check back tomorrow for a new one!")
 
 if path:
-gif = open(path, 'rb')
-response = t_api.upload_media(media=gif)
+    gif = open(path, 'rb')
+    response = t_api.upload_media(media=gif)
 
-t_api.update_status(media_ids=[response['media_ids']])
+    t_api.update_status(media_ids=[response['media_ids']])
