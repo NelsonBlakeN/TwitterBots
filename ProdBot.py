@@ -3,7 +3,7 @@ import random
 
 #Weather API imports
 import requests
-import datetime
+from datetime import datetime, time
 
 #Twitter API imports
 from twython import Twython
@@ -16,9 +16,11 @@ ACCESS_SECRET = 'yy8qFkJ0TJhmx6DrfVs4FWneBwdyqxVRq2gfxGTZ0CtrL'
 
 t_api = Twython(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET)
 
+print datetime.now()
+
 #Weather API Key/calls
-k = "e8b29a056adebaa04d8f733f3a82897f"
-response = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily?q=Dallas&cnt=2&APPID='+k).json()
+key = "e8b29a056adebaa04d8f733f3a82897f"
+response = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily?q=Dallas&cnt=2&APPID='+key).json()
 
 #Obtaining the appropriate data drom the weather api response
 today = response['cnt']-1
@@ -27,13 +29,33 @@ r_tod = r_day_list[today]
 
 gif_choice = random.randint(10,50)
 gif_choice = int(round(gif_choice/10))
+print "Gif number: " + str(gif_choice)
 
 tod_weather_id = r_tod['weather'][0]['id']
+print "Today's weather ID: " + str(tod_weather_id)
 
 clear_sky = 800
 few_clouds = 801
+xtreme = {'900': 'tornado',
+          '901': 'tropical storm',
+          '902': 'hurricane',
+          '906': 'hail',
+          '961': 'violent storm',
+          '962': 'hurricane'
+          }
 
-if tod_weather_id is clear_sky or tod_weather_id is few_clouds:
+current_forecast = requests.get('http://api.openweathermap.org/data/2.5/weather?zip=76248,us&APPID='+key)
+
+now = datetime.now().time()
+sch_upper_end = time(7, 05)
+sch_lower_end = time(6, 55)
+
+if sch_upper_end <= now or now <= sch_lower_end:
+    if str(current_forecast) in xtreme or str(tod_weather_id) in xtreme:
+          t_api.update_status(status="ALERT: Extreme weather in your area, seek shelter and adhere to your local news network.")
+
+
+if tod_weather_id == clear_sky or tod_weather_id == few_clouds:
     tod_temp_k = r_tod['temp']['day']
     tod_temp_f = 1.8*(tod_temp_k-273.15)+32
 
@@ -57,4 +79,4 @@ if path:
     gif = open(path, 'rb')
     response = t_api.upload_media(media=gif)
 
-    t_api.update_status(media_ids=[response['media_ids']])
+    t_api.update_status(media_ids=[response['media_id']])
