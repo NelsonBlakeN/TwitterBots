@@ -23,6 +23,19 @@ client = oauth.Client(consumer, access_token)
 
 newfile = 'old_follow_count.txt'
 
+def main():
+    old_count = old_follow_count()
+    if old_count is None:
+        old_count = 0;
+    current_count = current_follow_count()
+    diff = current_count - old_count
+
+    send_alert(diff)
+
+    with open(newfile, 'w') as f:
+        f.truncate()
+        f.write(str(current_count))
+
 def old_follow_count():
     file = open(newfile, 'r')
     return int(file.readline())
@@ -37,20 +50,15 @@ def current_follow_count():
     return c
 
 def send_alert(d):
-    if(d < 0):
-        body = "Blake - You lost " + str(abs(d)) + " followers today."
-    elif(d > 0):
-        body = "Blake - You gained " + str(d) + " followers today."
-    message = twilio_client.messages.create(body=body, from_=MY_TWIL_NUM, to=MY_CELL_NUM)
+    if d < 0:
+        b = "Blake - You lost " + str(abs(d)) + " followers today."
+    elif d > 0:
+        b = "Blake - You gained " + str(d) + " followers today."
 
-old_count = old_follow_count()
-if old_count is None:
-    old_count = 0;
-current_count = current_follow_count()
-diff = current_count - old_count
+    # Ensures an alert is only sent if there is a change.
+    if d is not 0:
+        message = twilio_client.messages.create(body=b, from_=MY_TWIL_NUM, to=MY_CELL_NUM)
 
-send_alert(diff)
 
-with open(newfile, 'w') as f:
-    f.truncate()
-    f.write(str(current_count))
+if __name__ == "__main__":
+    main()
