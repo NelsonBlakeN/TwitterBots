@@ -1,9 +1,6 @@
-import requests
-import oauth2 as oauth
 import json
 import twitter_creds as twit_c
 import twilio_creds as twil_c
-from itertools import islice
 
 # Twitter API object
 twitter = twit_c.client
@@ -18,34 +15,33 @@ old_follow_list = []
 current_follow_list = []
 
 def main():
-    global current_follow_list, old_follow_list
+    # global current_follow_list, old_follow_list
 
     old_count = old_follow_count()
     if old_count is None:
-        old_count = 0;
+        old_count = 0
     current_count = current_follow_count()
     diff = current_count - old_count
 
     missing_people = list(set(current_follow_list).symmetric_difference(old_follow_list))
-    print missing_people
     send_alert(diff, missing_people)
 
     # Get writable string from list of IDs
     current_list_str = " ".join(map(str, current_follow_list))
 
-    with open(filename, 'w') as f:
-        f.truncate()
-        f.write(str(current_count)) # Save follow count
-        f.write("\n")               # New line
-        f.write(current_list_str)   # Save list of followers (IDs)
+    with open(filename, 'w') as hist_file:
+        hist_file.truncate()
+        hist_file.write(str(current_count)) # Save follow count
+        hist_file.write("\n")               # New line
+        hist_file.write(current_list_str)   # Save list of followers (IDs)
 
 def old_follow_count():
-    file = open(filename, 'r')
-    oc = int(file.readline())
+    hist_file = open(filename, 'r')
+    oc = int(hist_file.readline())
 
     #Getting a list of IDs from a string
     global old_follow_list
-    old_follow_list = map(int, file.readline().split(" "))
+    old_follow_list = map(int, hist_file.readline().split(" "))
 
     return oc
 
@@ -61,14 +57,13 @@ def current_follow_count():
 def send_alert(diff, user_ids):
     print "Sending alert; diff is", diff, "and users are", user_ids
     if diff < 0:
-        body = "Blake - You lost " + str(abs(diff)) + " follower"
+        body = "Blake, you lost " + str(abs(diff)) + " follower"
     elif diff > 0:
-        body = "Blake - You gained " + str(diff) + " follower"
+        body = "Blake, you gained " + str(diff) + " follower"
 
     if abs(diff) == 1:
         body = body+" today. It was "
     elif diff != 0:
-        print "Sending alert"
         # Ensures an alert is only sent if there is a change.
         body = body + "s today.\n\nThey were:\n"
 
@@ -84,12 +79,12 @@ def get_name(user_id):
     screen_name = json_data(data, "screen_name")
     name = json_data(data, "name")
 
-    return name + " (" + screen_name + ")"
+    return name + " (@" + screen_name + ")"
 
 def json_data(data, index):
     json_string = data.replace("'", "\"")
-    d = json.loads(json_string)
-    return d[index]
+    da = json.loads(json_string)
+    return da[index]
 
 
 if __name__ == "__main__":
