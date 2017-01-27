@@ -1,0 +1,6 @@
+code = 328724b2abf249338be64a709d85166d
+client_id = 7efde7b32af34163bda83906cec7e9ee
+client_secret = 1da8838eb08e426f8de721f42bf191bc
+token_url = https://api.instagram.com/oauth/authorize/?client_id=7efde7b32af34163bda83906cec7e9ee&redirect_uri=http://blake@blake-n-nelson.com&response_type=token
+
+TOKEN = 4307299325.7efde7b.58681b38682641d589a4f49872b8aa45
