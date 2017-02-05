@@ -1,4 +1,3 @@
-from InstagramAPI import InstagramAPI
 from pprint import pprint
 
 import insta_creds as ic
@@ -45,14 +44,6 @@ def follower_list():
             # If a suspicious account is found, report/block it
             # insta.block(user['pk'])
             print "Suspicious account found"
-
-# def get_creds(test=False):
-#     if False:
-#         file = open(FILENAME, 'r')
-#         return file.readline()
-#         # return "4307299325.7efde7b.58681b38682641d589a4f49872b8aa45"
-#     else:
-#         return "blakenelson19", "Tamu2019"
 
 if __name__ == "__main__":
     main()
