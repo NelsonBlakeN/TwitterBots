@@ -25,4 +25,4 @@ r_day_list = response['list']
 r_tod = r_day_list[today]
 
 
-t_api.update_status(status="Today is " + str(datetime.datetime.fromtimestamp(t_tod_dt)))
+t_api.update_status(status="Today is " + str(datetime.datetime.now()))

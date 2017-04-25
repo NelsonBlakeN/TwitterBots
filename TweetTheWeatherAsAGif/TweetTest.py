@@ -1,7 +1,7 @@
 import sys
 from twython import Twython
 
-tweetStr = "RIP Nasim Osman, 63, Bangladeshi politician, MP for Narayanganj (1986-1991, since 2008)."
+tweetStr = "Hello"
 
 CONSUMER_KEY = 'lygeb5MmWPyTLZidxgSXHdFno'
 CONSUMER_SECRET = 'JmgS5lUfUT0ZrB36hYQJ5cOINpuM4lOEnbBXwESAefVOGslJG8'
