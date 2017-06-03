@@ -1,6 +1,9 @@
-import json
+# import json
+# import ast
+import simplejson
 import twitter_creds as twit_c
 import twilio_creds as twil_c
+import pprint
 
 # Twitter API object
 twitter = twit_c.client
@@ -62,14 +65,16 @@ def send_alert(diff, user_ids):
         body = "Blake, you gained " + str(diff) + " follower"
 
     if abs(diff) == 1:
-        body = body+" today. It was "
+        body = body+". It was "
     elif diff != 0:
         # Ensures an alert is only sent if there is a change.
         body = body + "s today.\n\nThey were:\n"
 
     for u in user_ids:
         name = get_name(u)
-        body = body + name + "\n"
+        body = body + name
+        if name:
+            body += "\n";
 
     if diff is not 0:
         message = twilio.messages.create(body=body, from_=MY_TWIL_NUM, to=MY_CELL_NUM)
@@ -77,14 +82,18 @@ def send_alert(diff, user_ids):
 def get_name(user_id):
     response, data = twitter.request("https://api.twitter.com/1.1/users/show.json?user_id="+str(user_id))
     screen_name = json_data(data, "screen_name")
-    name = json_data(data, "name")
+    name = "* " + json_data(data, "name")
 
-    return name + " (@" + screen_name + ")"
+    if screen_name:
+        name += " (@" + screen_name + ")"
+    return name
 
 def json_data(data, index):
-    json_string = data.replace("'", "\"")
-    da = json.loads(json_string)
-    return da[index]
+    try:
+        data_dict = simplejson.loads(data);
+        return data_dict[index]
+    except KeyError, e:
+        return ""
 
 
 if __name__ == "__main__":
