@@ -1,17 +1,48 @@
 from pprint import pprint
+import time
+from InstagramAPI import InstagramAPI
 
 import insta_creds as ic
 
 FILENAME = "insta_token.txt"
 
-def main():
-    follower_list()
+insta = ic.insta
+insta.login()
 
-def follower_list():
-    insta = ic.insta
-    insta.login()
+def coal_mining():
 
-    # Get a list of all followers
+    # Store all users following the person
+    followers = get_all_followers()
+    num_found = len(followers)
+    if num_found < 1:
+        print "No followers were found."
+    else:
+        print "Finished collecting all", len(followers), "followers"
+
+    # Check if any are following less than 5 people
+    # (and that one is the target, for redundancy)
+    count = 0;
+    for u in followers:
+        # print u['username']
+        try:
+            insta.searchUsername(u['username']) # Rate limit caps at 100 / hr
+            if insta.LastResponse.status_code == 429:
+                print "Hit rate limit when searching usernames."
+                return
+            user = insta.LastJson['user']
+            count += 1
+            print(str(count) + ": " + str(user['username']))
+            if user['following_count'] < 5:
+                # If a suspicious account is found, report/block it
+                # insta.block(user['pk'])
+                print "\tSuspicious account found"
+        except Exception, e:
+            print(e)
+            pass
+        time.sleep(90);  # Space out API hits to avoid rate limiting
+
+# Return a list of all followers
+def get_all_followers():
     insta.searchUsername("egcarlin")
     insta_id = insta.LastJson['user']['pk']
 
@@ -27,24 +58,9 @@ def follower_list():
             break
     if insta.LastResponse.status_code == 429:
         print "Hit rate limit when collection followers."
-        return
-
-    print "Finished collecting all", len(followers), "followers"
-
-    # Check if any are following less than 5 people
-    # (and that one is the target, for redundancy)
-    for u in followers:
-        print u['username']
-        insta.searchUsername(u['username']) # Rate limit caps at 100 / hr
-        if insta.LastResponse.status_code == 429:
-            print "Hit rate limit when searching usernames."
-            return
-        user = insta.LastJson['user']
-        if user['following_count'] < 5:
-            # If a suspicious account is found, report/block it
-            # insta.block(user['pk'])
-            print "Suspicious account found"
+        return []
+    return followers
 
 if __name__ == "__main__":
-    main()
+    coal_mining()
 
