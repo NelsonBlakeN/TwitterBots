@@ -1,9 +1,6 @@
-# import json
-# import ast
 import simplejson
 import twitter_creds as twit_c
 import twilio_creds as twil_c
-import pprint
 
 # Twitter API object
 twitter = twit_c.client
@@ -18,8 +15,6 @@ old_follow_list = []
 current_follow_list = []
 
 def main():
-    # global current_follow_list, old_follow_list
-
     old_count = old_follow_count()
     if old_count is None:
         old_count = 0
