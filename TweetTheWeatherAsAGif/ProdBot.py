@@ -1,5 +1,6 @@
 import sys
 import random
+import logging
 
 #Weather API imports
 import requests
@@ -14,9 +15,16 @@ CONSUMER_SECRET = 'JmgS5lUfUT0ZrB36hYQJ5cOINpuM4lOEnbBXwESAefVOGslJG8'
 ACCESS_TOKEN = '737403682111643648-PIeyxkm7XPj9ARta66Ly6AQJGQJPEz3'
 ACCESS_SECRET = 'yy8qFkJ0TJhmx6DrfVs4FWneBwdyqxVRq2gfxGTZ0CtrL'
 
+# Twitter API Request object
 t_api = Twython(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET)
 
-print datetime.now()
+# Logging tool (setup)
+current_year = datetime.now().isocalendar()[0]
+current_week = datetime.now().isocalendar()[1]
+FILENAME = '/home/pi/Documents/logs/WeatherBotLogs/'+str(current_year)+'Week'+str(current_week)+'.log'
+logging.basicConfig(filename=FILENAME, level=logging.INFO)
+
+logger = logging.getLogger('WeatherGifBot')
 
 #Weather API Key/calls
 key = "e8b29a056adebaa04d8f733f3a82897f"
@@ -27,12 +35,9 @@ today = response['cnt']-1
 r_day_list = response['list']
 r_tod = r_day_list[today]
 
-gif_choice = random.randint(10,50)
-gif_choice = int(round(gif_choice/10))
-print "Gif number: " + str(gif_choice)
+gif_choice = random.randint(1,14)
 
 tod_weather_id = r_tod['weather'][0]['id']
-print "Today's weather ID: " + str(tod_weather_id)
 
 clear_sky = 800
 few_clouds = 801
@@ -55,28 +60,40 @@ if sch_upper_end <= now or now <= sch_lower_end:
           t_api.update_status(status="ALERT: Extreme weather in your area, seek shelter and adhere to your local news network.")
 
 
-if tod_weather_id == clear_sky or tod_weather_id == few_clouds:
-    tod_temp_k = r_tod['temp']['day']
-    tod_temp_f = 1.8*(tod_temp_k-273.15)+32
-
-    if tod_temp_f >= 85:
-        path = "/home/pi/Weather\ Gifs/hot/hot" + str(gif_choice) + ".gif"
-    elif tod_temp_f <= 84 and tod_temp_f >= 60:
-        path = "/home/pi/Weather\ Gifs/nice_day/nice" + str(gif_choice) + ".gif"
-    elif tod_temp_f < 60:
-        path = "/home/pi/Weather\ Gifs/cold/cold" + str(gif_choice) + ".gif"
-elif tod_weather_id > 200 and tod_weather_id < 600:
-    path = "/home/pi/Weather\ Gifs/rainy/rainy" + str(gif_choice) + ".gif"
-elif tod_weather_id < 700 and tod_weather_id >= 600:
-    path = "/home/pi/Weather\ Gifs/snowy/snowy" + str(gif_choice) + ".gif"
-elif tod_weather_id <= 804 and tod_weather_id >= 802:
-    path = "/home/pi/Weather\ Gifs/cloudy/cloudy" + str(gif_choice) + ".gif"
 else:
-    path = None
-    t_api.update_status(status="No gif today folks, check back tomorrow for a new one!")
+	logger.info('Today is ' + str(datetime.now()))
+	logger.info("Gif number: " + str(gif_choice))
+	logger.info("Today's weather ID: " + str(tod_weather_id))
 
-if path:
-    gif = open(path, 'rb')
-    response = t_api.upload_media(media=gif)
+	if tod_weather_id == clear_sky or tod_weather_id == few_clouds:
+		tod_temp_k = r_tod['temp']['day']
+    		tod_temp_f = 1.8*(tod_temp_k-273.15)+32
 
-    t_api.update_status(media_ids=[response['media_id']])
+    		if tod_temp_f >= 85:
+			logger.info("HOT")
+        		path = "/home/pi/Weather Gifs/hot/hot" + str(gif_choice) + ".gif"
+    		elif tod_temp_f <= 84 and tod_temp_f >= 60:
+			logger.info("NICE DAY")
+			gif_choice = random.randint(1,11)	# There are 11 nice day gifs, so we reroll the choice
+        		path = "/home/pi/Weather Gifs/nice_day/nice" + str(gif_choice) + ".gif"
+	    	elif tod_temp_f < 60:
+			logger.info("COLD")
+        		path = "/home/pi/Weather Gifs/cold/cold" + str(gif_choice) + ".gif"
+	elif tod_weather_id > 200 and tod_weather_id < 600:
+		logger.info("RAINY")
+    		path = "/home/pi/Weather Gifs/rainy/rainy" + str(gif_choice) + ".gif"
+	elif tod_weather_id < 700 and tod_weather_id >= 600:
+   		path = "/home/pi/Weather Gifs/snowy/snowy" + str(gif_choice) + ".gif"
+	elif tod_weather_id <= 804 and tod_weather_id >= 802:
+   		path = "/home/pi/Weather Gifs/cloudy/cloudy" + str(gif_choice) + ".gif"
+	else:
+    		path = None
+    		t_api.update_status(status="No gif today folks, check back tomorrow for a new one!")
+
+	if path:
+    		gif = open(path, 'rb')
+    		response = t_api.upload_media(media=gif)
+
+    		t_api.update_status(media_ids=[response['media_id']])
+
+	logger.info("\n \n ************************** \n")
