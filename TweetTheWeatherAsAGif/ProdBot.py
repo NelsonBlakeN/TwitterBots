@@ -85,8 +85,11 @@ else:
         logger.info("RAINY")
         path = "/home/pi/WeatherGifs/rainy/rainy" + str(gif_choice) + ".gif"
     elif tod_weaher_id < 700 and tod_weather_id >= 600:
+        logger.info("SNOWY")
         path = "/home/pi/WeatherGifs/snowy/snowy" + str(gif_choice) + ".gif"
     elif tod_weather_id <= 804 and tod_weather_id >= 802:
+        logger.info("CLOUDY")
+        gif_choice = random.randint(3, 10) # Some gifs were removed due to size. Rerolling without renaming gifs
         path = "/home/pi/WeatherGifs/cloudy/cloudy" + str(gif_choice) + ".gif"
     else:
         # Something went wrong, weather category could not be determined
@@ -94,7 +97,10 @@ else:
         twitter.post_tweet(text="No gif today folks, check back tomorrow for a new one!")
 
     if path:
-        # Tweet the  weather gif
-        twitter.post_tweet(media=path)
+        # Tweet the weather gif
+        try:
+            twitter.post_tweet(media=path)
+        except:
+            logger.error("There was an error posting the tweet.")
 
     logger.info("\n \n ************************** \n")
