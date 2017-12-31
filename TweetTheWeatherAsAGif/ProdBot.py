@@ -98,9 +98,8 @@ else:
 
     if path:
         # Tweet the weather gif
-        try:
-            twitter.post_tweet(media=path)
-        except:
-            logger.error("There was an error posting the tweet.")
+        response = twitter.post_tweet(media=path)
+        if response is not None:
+            logger.error(response)
 
     logger.info("\n \n ************************** \n")
