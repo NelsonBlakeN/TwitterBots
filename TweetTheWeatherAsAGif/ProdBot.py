@@ -89,7 +89,7 @@ else:
         path = "/home/pi/WeatherGifs/snowy/snowy" + str(gif_choice) + ".gif"
     elif tod_weather_id <= 804 and tod_weather_id >= 802:
         logger.info("CLOUDY")
-        gif_choice = random.randint(3, 10) # Some gifs were removed due to size. Rerolling without renaming gifs
+        gif_choice = random.randint(2, 11) # Some gifs were removed due to media limits. Rerolling without renaming gifs
         path = "/home/pi/WeatherGifs/cloudy/cloudy" + str(gif_choice) + ".gif"
     else:
         # Something went wrong, weather category could not be determined
@@ -98,7 +98,7 @@ else:
 
     if path:
         # Tweet the weather gif
-        response = twitter.post_tweet(media=path)
+        response = twitter.post_tweet(media=path, logger=logger)
         if response is not None:
             logger.error(response)
 
