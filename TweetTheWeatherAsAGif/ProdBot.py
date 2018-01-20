@@ -22,7 +22,8 @@ logger = logging.getLogger('WeatherGifBot')
 #Weather API Key/calls
 key = "e8b29a056adebaa04d8f733f3a82897f"    # API Key
 # Multiday, daily weather forecast request (city=Dallas, # of days=2)
-response = requests.get('http://api.openweathermap.org/data/2.5/forecast/daily?q=Dallas&cnt=2&APPID='+key).json()
+response =
+requests.get('http://api.openweathermap.org/data/2.5/forecast/daily?q=bryan&cnt=2&APPID='+key).json()
 
 #Obtaining the appropriate data drom the weather api response
 today = response['cnt']-1                       # Index of desired day (today)
@@ -45,7 +46,8 @@ xtreme = {'900': 'tornado',
         }
 
 # Obtain current forecast (in case of emergency weather)
-current_forecast = requests.get('http://api.openweathermap.org/data/2.5/weather?zip=76248,us&APPID='+key)
+current_forecast =
+requests.get('http://api.openweathermap.org/data/2.5/weather?zip=77840,us&APPID='+key)
 
 # Obtain current time and define non-emergency schedule
 now = datetime.now().time()
@@ -83,6 +85,7 @@ else:
     # Determine weather category based on weather ID
     elif tod_weather_id > 200 and tod_weather_id < 600:
         logger.info("RAINY")
+        gif_choice = random.randint(1,12) # Due to size issues with some gifs, reroll
         path = "/home/pi/WeatherGifs/rainy/rainy" + str(gif_choice) + ".gif"
     elif tod_weaher_id < 700 and tod_weather_id >= 600:
         logger.info("SNOWY")
