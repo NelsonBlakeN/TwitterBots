@@ -77,7 +77,7 @@ class InstagramAPI:
                     self.isLoggedIn = True
                     self.username_id = self.LastJson["logged_in_user"]["pk"]
                     self.rank_token = "%s_%s" % (self.username_id, self.uuid)
-                    print self.rank_token
+                    # print self.rank_token
                     self.token = self.LastResponse.cookies["csrftoken"]
 
                     self.syncFeatures()
