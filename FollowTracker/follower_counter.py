@@ -53,7 +53,7 @@ def current_follow_count():
     return c
 
 def send_alert(diff, user_ids):
-    print "Sending alert; diff is", diff, "and users are", user_ids
+    print("Sending alert; diff is " + str(diff) + " and users are " + str(user_ids))
     if diff < 0:
         body = "Blake, you lost " + str(abs(diff)) + " follower"
     elif diff > 0:
@@ -87,7 +87,7 @@ def json_data(data, index):
     try:
         data_dict = simplejson.loads(data);
         return data_dict[index]
-    except KeyError, e:
+    except KeyError as e:
         return ""
 
 
