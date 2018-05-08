@@ -15,9 +15,9 @@ def coal_mining():
     followers = get_all_followers()
     num_found = len(followers)
     if num_found < 1:
-        print "No followers were found."
+        print("No followers were found.")
     else:
-        print "Finished collecting all", len(followers), "followers"
+        print("Finished collecting all"+str(len(followers))+"followers")
 
     # Check if any are following less than 5 people
     # (and that one is the target, for redundancy)
@@ -27,7 +27,7 @@ def coal_mining():
         try:
             insta.searchUsername(u['username']) # Rate limit caps at 100 / hr
             if insta.LastResponse.status_code == 429:
-                print "Hit rate limit when searching usernames."
+                print("Hit rate limit when searching usernames.")
                 return
             user = insta.LastJson['user']
             count += 1
@@ -35,8 +35,8 @@ def coal_mining():
             if user['following_count'] < 5:
                 # If a suspicious account is found, report/block it
                 # insta.block(user['pk'])
-                print "\tSuspicious account found"
-        except Exception, e:
+                print("\tSuspicious account found")
+        except Exception as e:
             print(e)
             pass
         time.sleep(90);  # Space out API hits to avoid rate limiting
@@ -54,10 +54,10 @@ def get_all_followers():
             insta.getUserFollowers(insta_id, max_id)
             followers += insta.LastJson['users']
             max_id = insta.LastJson['next_max_id']
-        except KeyError, e:
+        except KeyError as e:
             break
     if insta.LastResponse.status_code == 429:
-        print "Hit rate limit when collection followers."
+        print("Hit rate limit when collection followers.")
         return []
     return followers
 
