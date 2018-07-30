@@ -2,3 +2,4 @@
 *creds.py
 TwitterKeys.py
 .pyenv
+__pycache__
