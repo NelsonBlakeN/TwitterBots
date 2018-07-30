@@ -3,3 +3,4 @@
 TwitterKeys.py
 .pyenv
 __pycache__
+*.zip
