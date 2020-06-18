@@ -1,10 +1,9 @@
+import json
 import oauth2 as oauth
 import requests
 import simplejson
+import sys
 from pprint import pprint
-
-# Included in .gitignore to preserve integrity of keys
-from TwitterKeys import *
 
 def json_data(data, index=None):
 	# Converts data string into a dictionary, and returns the desired entry
@@ -21,8 +20,9 @@ class PersonalTwitter:
 
 	# Constructor
 	def __init__(self):
-		CONSUMER_KEY = CONSUMER_KEY_PT
-		CONSUMER_SECRET = CONSUMER_SECRET_PT
+		keys = json.load("TwitterKeys.json");
+		CONSUMER_KEY = keys["personal_keys"]["key"]
+		CONSUMER_SECRET = keys["personal_keys"]["secret"]
 		ACCESS_TOKEN = ACCESS_TOKEN_PT
 		ACCESS_SECRET = ACCESS_SECRET_PT
 

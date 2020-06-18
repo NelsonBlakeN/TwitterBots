@@ -1,6 +1,6 @@
 *.pyc
 *creds.py
-TwitterKeys.py
+*TwitterKeys.json
 .pyenv
 __pycache__
 *.zip
