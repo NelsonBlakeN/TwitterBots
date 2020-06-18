@@ -1,28 +1,21 @@
-# These libs are assumed to be always included
-import sys
+# Import system libraries
+import logging
 import os
-from tempfile import NamedTemporaryFile
-
-temp_file = NamedTemporaryFile(delete=False)
-
-try:
-    import logging
-    from datetime import datetime, time
-except Exception as e:
-    print("Something went wrong, see {} for details".format(temp_file.name))
-    temp_file.write("ERROR logging import failed: {}".format(e))
-    temp_file.close()
-    os.unlink(temp_file.name)
-    sys.exit()
+import random
+import sys
+from datetime import datetime, time
 
 sys.path.append("..")
 
+# Setup custom logging utility
 try:
-    # Set up logging tool
     current_year = datetime.now().isocalendar()[0]
     current_week = datetime.now().isocalendar()[1]
-    FILENAME = '/home/pi/Documents/logs/WeatherBotLogs/'+str(current_year)+'Week'+str(current_week)+'.log'
-    logging.basicConfig(filename=FILENAME, level=logging.INFO)
+    FILENAME = './file.log'#'/home/pi/Documents/logs/WeatherBotLogs/'+str(current_year)+'Week'+str(current_week)+'.log'
+    logging.basicConfig(filename=FILENAME,
+                        level=logging.INFO,
+                        format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s : %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S')
 
     logger = logging.getLogger('WeatherGifBot')
 except FileNotFoundError:
@@ -37,18 +30,10 @@ except Exception as e:
     os.exit()
 
 try:
-    # sys.path.append("/home/pi/Bots")
-    import random
-
-    #Weather API imports
     import requests
-
-    #Twitter API imports
     from TwitterLib import WeatherTwitter
-
 except Exception as e:
     logger.error("Import failed: {}".format(e))
-    # print("ERROR import failed: {}".format(e))
     sys.exit()
 
 # Define constants
